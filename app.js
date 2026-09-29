@@ -32,34 +32,50 @@
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
-  /* Plan constructeur Yamaha MT-07 (2014–2020, intervalles Europe). */
-  var MT07_PLAN = [
-    ['Vidange huile moteur', 10000, 12, 'Huile 10W-40 JASO MA'],
-    ['Filtre à huile', 20000, 24, 'Une vidange sur deux'],
-    ['Graissage de la chaîne', 1000, 0, 'Et après chaque sortie sous la pluie'],
-    ['Tension et usure de la chaîne', 1000, 0, ''],
-    ['Pression des pneus', 0, 1, 'À froid, valeurs sur le manuel'],
-    ['Plaquettes de frein (contrôle)', 10000, 12, 'À chaque révision'],
-    ['Liquide de frein', 0, 24, 'DOT 4'],
-    ['Durites de frein', 0, 48, ''],
-    ['Bougies', 20000, 0, 'Contrôle à 10 000 km, remplacement à 20 000 km'],
-    ['Filtre à air', 40000, 0, 'Plus souvent en conditions poussiéreuses'],
-    ['Jeu aux soupapes', 40000, 0, 'Grosse révision'],
-    ['Liquide de refroidissement', 0, 36, ''],
-    ['Roulements de direction (graissage)', 20000, 0, ''],
-    ['Batterie (contrôle, charge)', 0, 12, 'Surtout avant et après l\'hiver']
-  ];
-  var PLANS = { mt07: MT07_PLAN, generic: DEFAULT_PLAN, none: [] };
-
+  var LIB = window.EnSellePlans;
   function makePlan(kind) {
-    var src = PLANS[kind] || (kind === true ? DEFAULT_PLAN : []);
-    return src.map(function (p) { return { id: uid(), name: p[0], intKm: p[1] || null, intMonths: p[2] || null, notes: p[3] }; });
+    var p = LIB.get(kind);
+    var src = p ? LIB.build(p) : kind === 'generic' ? DEFAULT_PLAN : [];
+    return src.map(function (x) { return { id: uid(), name: x[0], intKm: x[1] || null, intMonths: x[2] || null, notes: x[3] }; });
+  }
+  function planLabel(id) {
+    var p = LIB.get(id);
+    return p ? p.brand + ' ' + p.label : id === 'generic' ? 'Plan type générique' : 'Plan personnalisé';
+  }
+  function planOptions(selected) {
+    var h = '';
+    LIB.brands().forEach(function (br) {
+      h += '<optgroup label="' + br + '">';
+      LIB.list.filter(function (p) { return p.brand === br; }).forEach(function (p) {
+        h += '<option value="' + p.id + '"' + (p.id === selected ? ' selected' : '') + '>' + esc(p.brand + ' ' + p.label) + '</option>';
+      });
+      h += '</optgroup>';
+    });
+    h += '<optgroup label="Autre modèle"><option value="generic"' + (selected === 'generic' ? ' selected' : '') + '>Plan type générique (à ajuster)</option>' +
+      '<option value="none"' + (selected === 'none' ? ' selected' : '') + '>Aucun, je le remplis moi-même</option></optgroup>';
+    return h;
+  }
+  /* Détection du modèle à partir du nom saisi : pré-sélectionne le plan constructeur. */
+  function wirePlanPicker(nameId, selectId, hintId) {
+    var sel = $(selectId), touched = false;
+    sel.innerHTML = planOptions('generic');
+    function update() {
+      var p = LIB.detect($(nameId).value);
+      if (!touched) sel.value = p ? p.id : 'generic';
+      var hint = $(hintId);
+      if (p && sel.value === p.id) hint.textContent = 'Plan constructeur trouvé pour ce modèle. Vérifie-le avec ton carnet.';
+      else if (sel.value === 'generic') hint.textContent = $(nameId).value.trim() ? 'Modèle absent de la bibliothèque : plan type proposé, à ajuster selon ton manuel.' : 'Tape le modèle : si la bibliothèque le connaît, son plan est chargé automatiquement.';
+      else hint.textContent = '';
+    }
+    $(nameId).addEventListener('input', update);
+    sel.addEventListener('change', function () { touched = true; update(); });
+    return { reset: function () { touched = false; update(); } };
   }
   function emptyState() {
     return { version: 1, bikes: [], currentBikeId: null, settings: { warnKm: 500, warnDays: 30, notif: true }, lastBackup: null };
   }
   function newBike(name, km, plan) {
-    return { id: uid(), name: name, created: today(), kmLog: [{ date: today(), km: Number(km) || 0 }], tasks: makePlan(plan), history: [] };
+    return { id: uid(), name: name, created: today(), planId: plan, kmLog: [{ date: today(), km: Number(km) || 0 }], tasks: makePlan(plan), history: [] };
   }
   /* Remplace le plan d'une moto en gardant le lien avec l'historique (même nom = même opération). */
   function applyPlan(b, kind) {
@@ -437,12 +453,12 @@
     h += '</div><div class="btns"><button class="btn" type="button" id="s-add-bike">Ajouter une moto</button></div></div>';
 
     h += '<div class="panel"><h2>Plan d\'entretien · ' + esc(b.name) + '</h2>' +
-      '<p>Ajuste chaque intervalle avec le manuel ou le carnet constructeur de ta moto. La première échéance atteinte (km ou temps) déclenche le rappel.</p><div class="rows">';
+      '<p class="mono" style="color:var(--ink)">' + esc(planLabel(b.planId)) + '</p><p>Ajuste chaque intervalle avec le manuel ou le carnet constructeur de ta moto. La première échéance atteinte (km ou temps) déclenche le rappel.</p><div class="rows">';
     b.tasks.forEach(function (t) {
       h += '<button class="row" type="button" data-task="' + t.id + '"><span class="l"><b>' + esc(t.name) + '</b><span class="num">' + esc(interval(t)) + '</span></span><span class="r">Modifier</span></button>';
     });
     h += '</div><div class="btns"><button class="btn" type="button" id="s-add-task">Ajouter une opération</button>' +
-      '<button class="btn ghost" type="button" id="s-plan-mt07">Charger le plan Yamaha MT-07</button></div></div>';
+      '<button class="btn ghost" type="button" id="s-plan-lib">Charger un plan constructeur</button></div></div>';
 
     var permText = { granted: 'Activées sur cet appareil', denied: 'Bloquées : autorise-les dans les réglages du téléphone', 'default': 'Pas encore activées', unsupported: 'Indisponibles dans ce navigateur' }[perm];
     h += '<div class="panel"><h2>Rappels</h2>' +
@@ -466,12 +482,11 @@
     v.querySelectorAll('[data-task]').forEach(function (el) { el.onclick = function () { openTask(el.dataset.task); }; });
     $('s-add-bike').onclick = function () { openBike(null); };
     $('s-add-task').onclick = function () { openTask(null); };
-    $('s-plan-mt07').onclick = function () {
-      confirmBox('Charger le plan Yamaha MT-07 ?', 'Le plan de ' + b.name + ' sera remplacé par les intervalles Yamaha (MT-07 2014–2020). Ton carnet est conservé et reste relié aux opérations de même nom.', 'Charger').then(function (ok) {
-        if (!ok) return;
-        b.__old = b.tasks.slice(); applyPlan(b, 'mt07'); delete b.__old;
-        save(); render(); toast('Plan MT-07 chargé'); checkReminders(false);
-      });
+    $('s-plan-lib').onclick = function () {
+      var guess = LIB.detect(b.name);
+      $('p-plan').innerHTML = planOptions(b.planId && LIB.get(b.planId) ? b.planId : guess ? guess.id : 'generic');
+      $('p-bike').textContent = b.name;
+      openDlg('dlg-plan');
     };
     if ($('s-notif')) $('s-notif').onclick = enableNotifs;
     if ($('s-test')) $('s-test').onclick = testNotif;
@@ -608,6 +623,7 @@
     $('bike-title').textContent = x ? 'Modifier la moto' : 'Nouvelle moto';
     $('b-name').value = x ? x.name : ''; $('b-km').value = ''; $('b-km').required = !x;
     $('b-km-field').hidden = !!x; $('b-plan-field').hidden = !!x; $('b-delete').hidden = !x;
+    if (!x) pickB.reset();
     closeDlg('dlg-bikes'); openDlg('dlg-bike');
   }
   $('bike-form').addEventListener('submit', function (ev) {
@@ -640,6 +656,18 @@
     openDlg('dlg-bikes');
   };
   $('bikes-add').onclick = function () { openBike(null); };
+
+  /* ---------- Plan constructeur ---------- */
+  $('plan-form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var b = bike(), id = $('p-plan').value;
+    b.__old = b.tasks.slice(); applyPlan(b, id); delete b.__old;
+    b.planId = id;
+    save(); closeDlg('dlg-plan'); render(); toast('Plan chargé : ' + planLabel(id)); checkReminders(false);
+  });
+  var pickW = wirePlanPicker('w-name', 'w-plan', 'w-plan-hint');
+  var pickB = wirePlanPicker('b-name', 'b-plan', 'b-plan-hint');
+  pickW.reset();
 
   /* ---------- Accueil ---------- */
   $('welcome-form').addEventListener('submit', function (ev) {

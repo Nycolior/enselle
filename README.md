@@ -8,7 +8,7 @@ Gratuite, sans compte, sans serveur : les données restent sur ton téléphone.
 1. Crée un compte gratuit sur https://github.com
 2. Clique sur « New repository », nomme-le `enselle`, laisse-le **Public**, crée-le.
 3. Clique sur « uploading an existing file » et glisse **le contenu** du dossier
-   (index.html, app.js, logic.js, sw.js, manifest.webmanifest et les dossiers icons et fonts).
+   (index.html, app.js, logic.js, plans.js, sw.js, manifest.webmanifest et les dossiers icons et fonts).
    Valide avec « Commit changes ».
 4. Va dans Settings → Pages → « Deploy from a branch », branche `main`, dossier `/ (root)`, Save.
 5. Après une minute, l'adresse s'affiche : `https://TON-PSEUDO.github.io/enselle/`
@@ -36,3 +36,9 @@ Puis, dans l'appli : Réglages → Rappels → Activer.
 
 Les données sont stockées dans le navigateur du téléphone. Réglages → Sauvegarder produit un fichier .json à garder
 dans ton Drive/iCloud ; « Restaurer » le recharge (changement de téléphone, par exemple).
+
+## Bibliothèque de modèles
+
+Quand tu crées une moto, EnSelle reconnaît le modèle tapé et charge son plan constructeur
+(fichier `plans.js`, 12 modèles courants). Pour un modèle absent, le plan type générique est proposé.
+Les intervalles viennent des manuels constructeurs : vérifie-les toujours avec le carnet de ta moto.

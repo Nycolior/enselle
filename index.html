@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-title" content="EnSelle">
 <!--FONTS-->
 <style>
-@font-face { font-family: "Big Shoulders Stencil Display"; font-weight: 800; font-style: normal; font-display: swap; src: url(fonts/stencil-800.woff2) format("woff2"); }
+@font-face { font-family: "Big Shoulders Display"; font-weight: 800; font-style: normal; font-display: swap; src: url(fonts/titre-800.woff2) format("woff2"); }
 @font-face { font-family: "Archivo"; font-weight: 400; font-style: normal; font-display: swap; src: url(fonts/archivo-400.woff2) format("woff2"); }
 @font-face { font-family: "Archivo"; font-weight: 500; font-style: normal; font-display: swap; src: url(fonts/archivo-500.woff2) format("woff2"); }
 @font-face { font-family: "Archivo"; font-weight: 600; font-style: normal; font-display: swap; src: url(fonts/archivo-600.woff2) format("woff2"); }
@@ -23,7 +23,7 @@
 @font-face { font-family: "IBM Plex Mono"; font-weight: 600; font-style: normal; font-display: swap; src: url(fonts/plexmono-600.woff2) format("woff2"); }
 </style>
 <style>
-/* Mise en page : une colonne façon appli. Direction « atelier » : béton et graphite, lettrage au pochoir,
+/* Mise en page : une colonne façon appli. Direction « atelier » : béton et graphite, lettrage d'atelier condensé,
    plaque de compteur vissée, opérations présentées comme des étiquettes de pièces tamponnées. */
 :root {
   --bg: #E3E4E2;          /* béton ciré */
@@ -44,7 +44,7 @@
   --unk: #5D6163;  --unk-soft: #D8DAD8;
   --shadow: 0 1px 0 rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.05);
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  --f-display: "Big Shoulders Stencil Display", "Impact", "Arial Narrow", sans-serif;
+  --f-display: "Big Shoulders Display", "Impact", "Arial Narrow", sans-serif;
   --f-body: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
   --r: 6px;
@@ -260,7 +260,7 @@ dialog h2 { font-size: 30px; }
       <h2>Ta moto</h2>
       <div class="field"><label for="w-name">Nom (marque, modèle…)</label><input id="w-name" required placeholder="ex. Yamaha MT-07 2019" autocomplete="off"></div>
       <div class="field"><label for="w-km">Kilométrage actuel</label><input id="w-km" type="number" inputmode="numeric" min="0" required placeholder="ex. 18450"></div>
-      <div class="field"><label for="w-plan">Plan d'entretien de départ</label><select id="w-plan"><option value="mt07">Yamaha MT-07 (2014–2020)</option><option value="generic">Plan type générique</option><option value="none">Aucun, je le remplis moi-même</option></select></div>
+      <div class="field"><label for="w-plan">Plan d'entretien de départ</label><select id="w-plan"></select><p class="help" id="w-plan-hint"></p></div>
       <button class="btn primary" type="submit">Créer mon carnet</button>
     </form>
     <div class="btns">
@@ -358,11 +358,21 @@ dialog h2 { font-size: 30px; }
     <h2 id="bike-title">Moto</h2>
     <div class="field"><label for="b-name">Nom</label><input id="b-name" required autocomplete="off"></div>
     <div class="field" id="b-km-field"><label for="b-km">Kilométrage actuel</label><input id="b-km" type="number" inputmode="numeric" min="0"></div>
-    <div class="field" id="b-plan-field"><label for="b-plan">Plan d'entretien de départ</label><select id="b-plan"><option value="mt07">Yamaha MT-07 (2014–2020)</option><option value="generic">Plan type générique</option><option value="none">Aucun, je le remplis moi-même</option></select></div>
+    <div class="field" id="b-plan-field"><label for="b-plan">Plan d'entretien de départ</label><select id="b-plan"></select><p class="help" id="b-plan-hint"></p></div>
     <div class="form-actions">
       <button class="btn danger ghost" type="button" id="b-delete" hidden>Supprimer</button>
       <div class="right"><button class="btn" type="button" data-close>Annuler</button><button class="btn primary" type="submit">Enregistrer</button></div>
     </div>
+  </form>
+</dialog>
+
+<!-- Plan constructeur -->
+<dialog id="dlg-plan">
+  <form method="dialog" id="plan-form">
+    <h2>Plan constructeur</h2>
+    <p class="help">Le plan de <b id="p-bike"></b> sera remplacé. Ton carnet est conservé : les interventions restent reliées aux opérations de même nom.</p>
+    <div class="field"><label for="p-plan">Modèle</label><select id="p-plan"></select></div>
+    <div class="form-actions"><div class="right"><button class="btn" type="button" data-close>Annuler</button><button class="btn primary" type="submit">Charger ce plan</button></div></div>
   </form>
 </dialog>
 
@@ -388,6 +398,7 @@ dialog h2 { font-size: 30px; }
 <input type="file" id="import-file" accept="application/json,.json" hidden>
 
 <script src="logic.js"></script>
+<script src="plans.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

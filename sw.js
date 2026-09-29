@@ -1,10 +1,10 @@
 /* EnSelle — service worker : fonctionnement hors ligne + rappels. */
 importScripts('logic.js');
 
-var CACHE = 'enselle-v5';
-var ASSETS = ['./', 'index.html', 'app.js', 'logic.js', 'manifest.webmanifest',
+var CACHE = 'enselle-v7';
+var ASSETS = ['./', 'index.html', 'app.js', 'logic.js', 'plans.js', 'manifest.webmanifest',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png',
-  'fonts/stencil-800.woff2', 'fonts/archivo-400.woff2', 'fonts/archivo-500.woff2', 'fonts/archivo-600.woff2',
+  'fonts/titre-800.woff2', 'fonts/archivo-400.woff2', 'fonts/archivo-500.woff2', 'fonts/archivo-600.woff2',
   'fonts/archivo-700.woff2', 'fonts/plexmono-400.woff2', 'fonts/plexmono-500.woff2', 'fonts/plexmono-600.woff2'];
 
 self.addEventListener('install', function (e) {
