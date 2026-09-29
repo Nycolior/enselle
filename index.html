@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EnSelle</title>
+<meta name="description" content="Carnet d'entretien et rappels pour ta moto">
+<meta name="theme-color" content="#1A1B1D">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="EnSelle">
+<!--FONTS-->
+<style>
+@font-face { font-family: "Big Shoulders Stencil Display"; font-weight: 800; font-style: normal; font-display: swap; src: url(fonts/stencil-800.woff2) format("woff2"); }
+@font-face { font-family: "Archivo"; font-weight: 400; font-style: normal; font-display: swap; src: url(fonts/archivo-400.woff2) format("woff2"); }
+@font-face { font-family: "Archivo"; font-weight: 500; font-style: normal; font-display: swap; src: url(fonts/archivo-500.woff2) format("woff2"); }
+@font-face { font-family: "Archivo"; font-weight: 600; font-style: normal; font-display: swap; src: url(fonts/archivo-600.woff2) format("woff2"); }
+@font-face { font-family: "Archivo"; font-weight: 700; font-style: normal; font-display: swap; src: url(fonts/archivo-700.woff2) format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 400; font-style: normal; font-display: swap; src: url(fonts/plexmono-400.woff2) format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-style: normal; font-display: swap; src: url(fonts/plexmono-500.woff2) format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 600; font-style: normal; font-display: swap; src: url(fonts/plexmono-600.woff2) format("woff2"); }
+</style>
+<style>
+/* Mise en page : une colonne façon appli. Direction « atelier » : béton et graphite, lettrage au pochoir,
+   plaque de compteur vissée, opérations présentées comme des étiquettes de pièces tamponnées. */
+:root {
+  --bg: #E3E4E2;          /* béton ciré */
+  --surface: #F6F6F4;     /* étiquette */
+  --ink: #151617;         /* graphite */
+  --muted: #5D6163;
+  --line: #C6C8C6;
+  --steel: #9A9EA0;
+  --accent: #151617;      /* action principale : encre */
+  --accent-ink: #F3F3F1;
+  --accent-soft: #D5D7D5;
+  --gauge: #1A1B1D;       /* plaque du compteur */
+  --gauge-digit: #F1F1EE;
+  --gauge-tenth: #E0452B; /* voyant */
+  --late: #C0301B; --late-soft: #F2DAD5;
+  --soon: #A86C00; --soon-soft: #F1E4C8;
+  --ok: #2E7447;   --ok-soft: #D7E8DC;
+  --unk: #5D6163;  --unk-soft: #D8DAD8;
+  --shadow: 0 1px 0 rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.05);
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --f-display: "Big Shoulders Stencil Display", "Impact", "Arial Narrow", sans-serif;
+  --f-body: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --r: 6px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111213; --surface: #1C1D1F; --ink: #E7E7E3; --muted: #979A9C; --line: #313436; --steel: #6D7174;
+    --accent: #E7E7E3; --accent-ink: #111213; --accent-soft: #2A2C2E;
+    --gauge: #070808; --gauge-digit: #F1F1EE; --gauge-tenth: #FF5A3C;
+    --late: #FF6A4E; --late-soft: #3A1B15; --soon: #F0B13A; --soon-soft: #34290F;
+    --ok: #5DC585; --ok-soft: #16301F; --unk: #979A9C; --unk-soft: #2A2C2E;
+    --shadow: 0 1px 0 rgba(0,0,0,.4);
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111213; --surface: #1C1D1F; --ink: #E7E7E3; --muted: #979A9C; --line: #313436; --steel: #6D7174;
+  --accent: #E7E7E3; --accent-ink: #111213; --accent-soft: #2A2C2E;
+  --gauge: #070808; --gauge-digit: #F1F1EE; --gauge-tenth: #FF5A3C;
+  --late: #FF6A4E; --late-soft: #3A1B15; --soon: #F0B13A; --soon-soft: #34290F;
+  --ok: #5DC585; --ok-soft: #16301F; --unk: #979A9C; --unk-soft: #2A2C2E;
+  --shadow: 0 1px 0 rgba(0,0,0,.4);
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg) var(--grain); color: var(--ink);
+  font: 16px/1.45 var(--f-body);
+  -webkit-tap-highlight-color: transparent;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+[hidden] { display: none !important; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 800; text-transform: uppercase; letter-spacing: .02em; text-wrap: balance; margin: 0; line-height: 1; }
+.num { font-variant-numeric: tabular-nums; }
+.mono { font-family: var(--f-mono); }
+
+.shell { max-width: 560px; margin: 0 auto; padding-inline: 16px; padding-block: 12px 150px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+
+/* En-tête */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 8px; white-space: nowrap; font-family: var(--f-display); font-weight: 800; font-size: 30px; letter-spacing: .02em; text-transform: none; color: var(--ink); }
+.brand svg { width: 30px; height: 30px; flex: none; }
+.bike-pick { min-width: 0; display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); border-radius: var(--r); padding: 6px 12px; font-weight: 600; font-size: 15px; max-width: 58%; }
+.bike-pick span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Plaque du compteur, vissée */
+.dash { position: relative; background: var(--gauge); color: var(--gauge-digit); border-radius: 10px; padding: 18px 20px 16px; display: grid; gap: 12px;
+  background-image: linear-gradient(160deg, rgba(255,255,255,.06), rgba(255,255,255,0) 45%), var(--grain); }
+.dash::before, .dash::after { content: ""; position: absolute; top: 9px; width: 7px; height: 7px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #8d9194, #3a3d40 70%); box-shadow: 0 0 0 1px rgba(0,0,0,.5); }
+.dash::before { left: 9px; } .dash::after { right: 9px; }
+.dash-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.dash-label { font-family: var(--f-display); font-weight: 800; font-size: 16px; letter-spacing: .18em; text-transform: uppercase; opacity: .65; padding-left: 8px; }
+.odo { display: flex; gap: 2px; align-items: stretch; padding: 5px; background: #000; border-radius: 5px; width: max-content; max-width: 100%; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); }
+.odo b { display: grid; place-items: center; width: 1.05em; height: 1.45em; font: 600 clamp(28px, 9vw, 38px)/1 var(--f-mono); color: #F1F1EE;
+  background: linear-gradient(#0c0c0c, #2a2b2c 22%, #2f3031 50%, #2a2b2c 78%, #0c0c0c); border-radius: 2px; }
+.odo b.dim { color: #6a6d70; }
+.odo .unit { align-self: flex-end; font: 600 14px var(--f-mono); margin: 0 4px 2px 8px; color: #b9bcbd; }
+.dash small { opacity: .7; font: 13px var(--f-mono); }
+.btn-gauge { background: var(--gauge-digit); color: #151617; border: 0; border-radius: var(--r); padding: 9px 16px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: 14px; }
+.lamp { display: flex; align-items: center; gap: 6px; font: 600 11px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; }
+
+/* Récap : étiquettes rectangulaires */
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 3px; font: 600 13px var(--f-mono); letter-spacing: .02em; text-transform: uppercase; }
+.chip i { width: 8px; height: 8px; border-radius: 1px; background: currentColor; }
+.s-late { color: var(--late); background: var(--late-soft); }
+.s-soon { color: var(--soon); background: var(--soon-soft); }
+.s-ok { color: var(--ok); background: var(--ok-soft); }
+.s-unknown { color: var(--unk); background: var(--unk-soft); }
+
+/* Bandeaux : bande de signalisation */
+.banner { background: var(--surface); border-radius: var(--r); padding: 14px 16px 14px 24px; display: grid; gap: 10px; position: relative; overflow: hidden; box-shadow: var(--shadow); }
+.banner::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: repeating-linear-gradient(-45deg, var(--ink) 0 6px, transparent 6px 12px); }
+.banner p { margin: 0; }
+.banner .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Titres de section peints au pochoir */
+.section-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 12px; }
+.section-head h2 { font-size: 34px; letter-spacing: .03em; }
+.section-head .hint { color: var(--muted); font: 13px var(--f-mono); }
+
+/* Opérations : étiquettes de pièces */
+.tasks { display: grid; gap: 12px; }
+.task { background: var(--surface); border-radius: 4px 10px 10px 4px; box-shadow: var(--shadow); padding: 14px 14px 12px 40px; display: grid; gap: 8px; position: relative; overflow: hidden; }
+.task::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: var(--stripe-bg, var(--line)); }
+.task::after { content: ""; position: absolute; left: 17px; top: 18px; width: 12px; height: 12px; border-radius: 50%; background: var(--bg); box-shadow: inset 0 1px 2px rgba(0,0,0,.35), 0 0 0 3px var(--line); }
+.task.late { --stripe: var(--late); --stripe-bg: repeating-linear-gradient(-45deg, var(--late) 0 5px, transparent 5px 10px); }
+.task.soon { --stripe: var(--soon); --stripe-bg: repeating-linear-gradient(-45deg, var(--soon) 0 5px, transparent 5px 10px); }
+.task.ok { --stripe: var(--ok); --stripe-bg: var(--ok); }
+.task.unknown { --stripe: var(--unk); --stripe-bg: repeating-linear-gradient(180deg, var(--unk) 0 6px, transparent 6px 12px); }
+.task-spec { font: 500 12px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.task-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.task h3 { font-size: 26px; line-height: .95; min-width: 0; }
+.pill { flex: none; font-family: var(--f-display); font-weight: 800; font-size: 15px; letter-spacing: .1em; text-transform: uppercase; padding: 2px 8px; border: 2px solid currentColor; border-radius: 3px; background: transparent !important; transform: rotate(-4deg); margin-top: 2px; opacity: .92; }
+.task .what { font-weight: 600; }
+.task .meta { color: var(--muted); font-size: 14px; display: grid; gap: 2px; }
+.bar { height: 8px; border-radius: 1px; background: var(--line); overflow: hidden; position: relative; }
+.bar::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), var(--surface) calc(10% - 1px) 10%); }
+.bar span { display: block; height: 100%; background: var(--stripe); }
+.task-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+
+/* Boutons */
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r); padding: 8px 14px; font-weight: 600; font-size: 15px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--ink); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.danger { color: var(--late); }
+.btn.small { padding: 6px 12px; font-size: 14px; }
+.btn.ghost { background: transparent; }
+.fab { position: fixed; right: max(16px, calc(50% - 264px)); bottom: calc(80px + env(safe-area-inset-bottom, 0px)); background: var(--accent); color: var(--accent-ink); border: 0; border-radius: var(--r); padding: 14px 18px; font-weight: 700; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; box-shadow: 0 6px 20px rgba(0,0,0,.28); display: flex; align-items: center; gap: 8px; z-index: 5; }
+.fab svg { width: 20px; height: 20px; }
+
+/* Onglets : tiroir de servante */
+.tabs { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); display: flex; justify-content: center; padding-bottom: env(safe-area-inset-bottom, 0px); z-index: 6; }
+.tabs button { flex: 1; max-width: 186px; border: 0; background: none; padding: 9px 4px 10px; display: grid; justify-items: center; gap: 2px; font: 600 11px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); position: relative; }
+.tabs button svg { width: 24px; height: 24px; }
+.tabs button[aria-current="page"] { color: var(--ink); }
+.tabs button[aria-current="page"]::before { content: ""; position: absolute; top: -1px; left: 30%; right: 30%; height: 3px; background: var(--ink); }
+
+/* Carnet : lignes d'ordre de réparation */
+.year { display: grid; gap: 10px; }
+.year-head { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid var(--ink); padding-bottom: 4px; }
+.year-head h3 { font-size: 30px; }
+.year-head span { color: var(--muted); font: 14px var(--f-mono); }
+.entry { background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow); padding: 12px 14px; display: grid; grid-template-columns: 56px 1fr; gap: 12px; text-align: left; border: 0; width: 100%; }
+.entry-date { text-align: center; line-height: 1; padding: 4px 0; border-right: 1px dashed var(--line); padding-right: 10px; }
+.entry-date b { display: block; font: 800 30px var(--f-display); }
+.entry-date span { font: 600 11px var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+.entry-body { display: grid; gap: 4px; min-width: 0; }
+.entry-body .ops { font-weight: 600; }
+.entry-body .meta { color: var(--muted); font: 13px var(--f-mono); }
+.entry-body .note { font-size: 14px; overflow-wrap: anywhere; }
+.tag { display: inline-block; font: 600 11px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; padding: 1px 6px; border-radius: 2px; border: 1px solid currentColor; color: var(--ink); }
+.empty { text-align: center; color: var(--muted); padding: 32px 12px; display: grid; gap: 12px; justify-items: center; }
+
+/* Réglages */
+.panel { background: var(--surface); border-radius: var(--r); box-shadow: var(--shadow); padding: 16px; display: grid; gap: 12px; }
+.panel h2 { font-size: 26px; }
+.panel p { margin: 0; color: var(--muted); font-size: 14px; }
+.rows { display: grid; }
+.row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px dashed var(--line); background: none; border-left: 0; border-right: 0; border-bottom: 0; text-align: left; width: 100%; }
+.row:first-child { border-top: 0; }
+.row .l { min-width: 0; }
+.row .l b { display: block; font-weight: 600; }
+.row .l span { color: var(--muted); font-size: 13px; font-family: var(--f-mono); }
+.row .r { color: var(--muted); flex: none; font-size: 14px; }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Formulaires / dialogues */
+dialog { border: 0; border-radius: 10px; padding: 0; width: min(520px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); background: var(--surface); color: var(--ink); box-shadow: 0 20px 60px rgba(0,0,0,.4); }
+dialog::backdrop { background: rgba(8,9,10,.6); }
+dialog form { display: grid; gap: 14px; padding: 20px 18px 18px; }
+dialog h2 { font-size: 30px; }
+.field { display: grid; gap: 5px; }
+.field label, .field .lbl { font: 600 12px var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.field input, .field select, .field textarea { width: 100%; border: 1px solid var(--line); background: var(--bg); border-radius: 4px; padding: 10px 12px; font-size: 16px; }
+.field textarea { min-height: 70px; resize: vertical; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.checks { display: grid; gap: 2px; max-height: 240px; overflow: auto; border: 1px solid var(--line); border-radius: 4px; padding: 6px 10px; background: var(--bg); }
+.checks label { display: flex; gap: 10px; align-items: center; padding: 6px 0; font-weight: 500; color: var(--ink); }
+.checks input { width: 20px; height: 20px; accent-color: var(--ink); flex: none; }
+.seg { display: flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.seg label { flex: 1; text-align: center; padding: 9px; font-weight: 600; color: var(--muted); cursor: pointer; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg label:has(input:checked) { background: var(--accent); color: var(--accent-ink); }
+.form-actions { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.form-actions .right { display: flex; gap: 8px; margin-left: auto; }
+.err { color: var(--late); font-size: 14px; font-weight: 600; margin: 0; }
+.help { color: var(--muted); font-size: 13px; margin: 0; }
+
+.toast { position: fixed; left: 50%; bottom: calc(142px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: var(--r); font-weight: 600; font-size: 15px; z-index: 20; max-width: calc(100vw - 32px); text-align: center; }
+
+/* Accueil */
+.welcome { display: grid; gap: 18px; padding-top: 12px; }
+.welcome h1 { font-size: clamp(46px, 14vw, 64px); line-height: .9; }
+.welcome h1 em { font-style: normal; color: var(--muted); }
+.welcome p { margin: 0; color: var(--muted); }
+.welcome .panel { gap: 14px; }
+.demo-note { font: 600 12px var(--f-mono); letter-spacing: .02em; background: var(--soon-soft); color: var(--soon); padding: 8px 12px; border-radius: var(--r); display: flex; justify-content: space-between; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .task, .entry { animation: rise .25s ease both; }
+  @keyframes rise { from { transform: translateY(4px); opacity: .6; } }
+  .pill { animation: stamp .35s cubic-bezier(.3,1.6,.5,1) both; }
+  @keyframes stamp { from { transform: rotate(-4deg) scale(1.6); opacity: 0; } }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="top" id="top">
+    <div class="brand"><svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="112" fill="currentColor"/><g transform="translate(0,-6)" fill="none" stroke="var(--bg)" stroke-linecap="round" stroke-linejoin="round"><circle cx="140" cy="318" r="60" stroke-width="22"/> <circle cx="376" cy="318" r="60" stroke-width="22"/> <circle cx="140" cy="318" r="9" fill="var(--bg)" stroke="none"/> <circle cx="376" cy="318" r="9" fill="var(--bg)" stroke="none"/> <path d="M140 318 L232 300" stroke-width="16"/> <path d="M376 318 L326 190" stroke-width="16"/> <path d="M306 182 L352 168" stroke-width="12"/> <path d="M188 244 C 204 202, 268 184, 312 196 L 328 222 L 316 252 C 278 260, 232 264, 196 264 Z" fill="var(--bg)" stroke="none"/> <path d="M196 244 L 150 238 L 100 204 L 96 220 L 144 258 L 200 264 Z" fill="var(--bg)" stroke="none"/> <path d="M204 272 L 300 264 L 310 302 L 272 332 L 212 324 Z" fill="var(--bg)" stroke="none"/> <path d="M246 334 L 296 350" stroke-width="12"/> <path d="M336 204 L 360 212 L 352 236 L 332 228 Z" fill="var(--bg)" stroke="none"/></g></svg><span id="brand-name">EnSelle</span></div>
+    <button class="bike-pick" id="bike-pick" type="button" hidden><span id="bike-name"></span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg></button>
+  </header>
+
+  <div id="demo-note" class="demo-note" hidden>
+    <span>Aperçu avec des données d'exemple.</span>
+    <button class="btn small" type="button" id="demo-clear">Repartir de zéro</button>
+  </div>
+
+  <!-- Premier lancement -->
+  <section id="view-welcome" class="welcome" hidden>
+    <h1>Ton atelier<br><em>dans la poche.</em></h1>
+    <p>Note chaque intervention, relève ton compteur de temps en temps, et l'appli te prévient quand une vidange, un liquide de frein ou un graissage de chaîne arrive à échéance, au kilométrage ou à la date.</p>
+    <form class="panel" id="welcome-form">
+      <h2>Ta moto</h2>
+      <div class="field"><label for="w-name">Nom (marque, modèle…)</label><input id="w-name" required placeholder="ex. Yamaha MT-07 2019" autocomplete="off"></div>
+      <div class="field"><label for="w-km">Kilométrage actuel</label><input id="w-km" type="number" inputmode="numeric" min="0" required placeholder="ex. 18450"></div>
+      <div class="field"><label for="w-plan">Plan d'entretien de départ</label><select id="w-plan"><option value="mt07">Yamaha MT-07 (2014–2020)</option><option value="generic">Plan type générique</option><option value="none">Aucun, je le remplis moi-même</option></select></div>
+      <button class="btn primary" type="submit">Créer mon carnet</button>
+    </form>
+    <div class="btns">
+      <label class="btn ghost" for="import-file-w">Restaurer une sauvegarde</label>
+      <button class="btn ghost" type="button" id="w-demo">Essayer avec un exemple</button>
+    </div>
+    <input type="file" id="import-file-w" accept="application/json,.json" hidden>
+  </section>
+
+  <!-- Entretiens -->
+  <section id="view-home" hidden></section>
+  <!-- Carnet -->
+  <section id="view-log" hidden></section>
+  <!-- Réglages -->
+  <section id="view-settings" hidden></section>
+</div>
+
+<button class="fab" id="fab" type="button" hidden>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+  Intervention
+</button>
+
+<nav class="tabs" id="tabs" hidden>
+  <button type="button" data-tab="home" aria-current="page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 16a8 8 0 1 1 16 0"/><path d="m12 16 4-5"/><circle cx="12" cy="16" r="1.4" fill="currentColor"/></svg>
+    Entretiens</button>
+  <button type="button" data-tab="log">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11M9 8h6"/></svg>
+    Carnet</button>
+  <button type="button" data-tab="settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L4 16.8V20h3.2l5.3-5.3a4 4 0 0 0 5.2-5.4l-2.4 2.4-2.3-.6-.6-2.3z"/></svg>
+    Réglages</button>
+</nav>
+
+<!-- Intervention -->
+<dialog id="dlg-entry">
+  <form method="dialog" id="entry-form">
+    <h2 id="entry-title">Nouvelle intervention</h2>
+    <div class="grid2">
+      <div class="field"><label for="e-date">Date</label><input id="e-date" type="date" required></div>
+      <div class="field"><label for="e-km">Kilométrage</label><input id="e-km" type="number" inputmode="numeric" min="0" required></div>
+    </div>
+    <div class="field"><span class="lbl">Opérations réalisées</span><div class="checks" id="e-tasks"></div></div>
+    <div class="field"><label for="e-other">Autre chose ? (optionnel)</label><input id="e-other" placeholder="ex. pneu arrière Michelin Road 6" autocomplete="off"></div>
+    <div class="grid2">
+      <div class="field"><label for="e-cost">Coût (€)</label><input id="e-cost" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0"></div>
+      <div class="field"><span class="lbl">Fait par</span>
+        <div class="seg"><label><input type="radio" name="e-who" value="moi" checked><span>Moi</span></label><label><input type="radio" name="e-who" value="garage"><span>Garage</span></label></div></div>
+    </div>
+    <div class="field"><label for="e-notes">Notes (optionnel)</label><textarea id="e-notes" placeholder="Références pièces, huile utilisée, remarques…"></textarea></div>
+    <p class="err" id="e-err" hidden></p>
+    <div class="form-actions">
+      <button class="btn danger ghost" type="button" id="e-delete" hidden>Supprimer</button>
+      <div class="right"><button class="btn" type="button" data-close>Annuler</button><button class="btn primary" type="submit">Enregistrer</button></div>
+    </div>
+  </form>
+</dialog>
+
+<!-- Relevé compteur -->
+<dialog id="dlg-km">
+  <form method="dialog" id="km-form">
+    <h2>Relever le compteur</h2>
+    <p class="help">Un relevé de temps en temps (chaque plein, par exemple) permet d'estimer quand tu atteindras les prochaines échéances en kilomètres.</p>
+    <div class="grid2">
+      <div class="field"><label for="k-km">Kilométrage</label><input id="k-km" type="number" inputmode="numeric" min="0" required></div>
+      <div class="field"><label for="k-date">Date</label><input id="k-date" type="date" required></div>
+    </div>
+    <p class="err" id="k-err" hidden></p>
+    <div class="form-actions"><div class="right"><button class="btn" type="button" data-close>Annuler</button><button class="btn primary" type="submit">Enregistrer</button></div></div>
+  </form>
+</dialog>
+
+<!-- Opération du plan -->
+<dialog id="dlg-task">
+  <form method="dialog" id="task-form">
+    <h2 id="task-title">Opération d'entretien</h2>
+    <div class="field"><label for="t-name">Nom</label><input id="t-name" required autocomplete="off" placeholder="ex. Vidange huile moteur"></div>
+    <div class="grid2">
+      <div class="field"><label for="t-km">Tous les… km</label><input id="t-km" type="number" inputmode="numeric" min="0" placeholder="ex. 6000"></div>
+      <div class="field"><label for="t-months">ou tous les… mois</label><input id="t-months" type="number" inputmode="numeric" min="0" placeholder="ex. 12"></div>
+    </div>
+    <p class="help">Remplis l'un ou les deux : la première échéance atteinte déclenche le rappel.</p>
+    <div class="field"><label for="t-notes">Note (optionnel)</label><input id="t-notes" autocomplete="off" placeholder="ex. huile 10W40, 3,1 L"></div>
+    <p class="err" id="t-err" hidden></p>
+    <div class="form-actions">
+      <button class="btn danger ghost" type="button" id="t-delete" hidden>Supprimer</button>
+      <div class="right"><button class="btn" type="button" data-close>Annuler</button><button class="btn primary" type="submit">Enregistrer</button></div>
+    </div>
+  </form>
+</dialog>
+
+<!-- Moto -->
+<dialog id="dlg-bike">
+  <form method="dialog" id="bike-form">
+    <h2 id="bike-title">Moto</h2>
+    <div class="field"><label for="b-name">Nom</label><input id="b-name" required autocomplete="off"></div>
+    <div class="field" id="b-km-field"><label for="b-km">Kilométrage actuel</label><input id="b-km" type="number" inputmode="numeric" min="0"></div>
+    <div class="field" id="b-plan-field"><label for="b-plan">Plan d'entretien de départ</label><select id="b-plan"><option value="mt07">Yamaha MT-07 (2014–2020)</option><option value="generic">Plan type générique</option><option value="none">Aucun, je le remplis moi-même</option></select></div>
+    <div class="form-actions">
+      <button class="btn danger ghost" type="button" id="b-delete" hidden>Supprimer</button>
+      <div class="right"><button class="btn" type="button" data-close>Annuler</button><button class="btn primary" type="submit">Enregistrer</button></div>
+    </div>
+  </form>
+</dialog>
+
+<!-- Choix de la moto -->
+<dialog id="dlg-bikes">
+  <form method="dialog">
+    <h2>Choisir la moto</h2>
+    <div class="rows" id="bikes-list"></div>
+    <div class="form-actions"><button class="btn" type="button" id="bikes-add">Ajouter une moto</button><div class="right"><button class="btn" type="button" data-close>Fermer</button></div></div>
+  </form>
+</dialog>
+
+<!-- Confirmation -->
+<dialog id="dlg-confirm">
+  <form method="dialog">
+    <h2 id="c-title">Confirmer</h2>
+    <p class="help" id="c-text" style="font-size:15px"></p>
+    <div class="form-actions"><div class="right"><button class="btn" type="button" data-close>Annuler</button><button class="btn primary" type="button" id="c-ok">Confirmer</button></div></div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden></div>
+<input type="file" id="import-file" accept="application/json,.json" hidden>
+
+<script src="logic.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
